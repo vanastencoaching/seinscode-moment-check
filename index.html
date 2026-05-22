@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEINsCode Moment-Check</title>
+<style>
+  /* Systemfonts - keine externe Übertragung */
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+  :root {
+    --cream:#F7F3EE; --cream-dark:#EDE8E0; --cream-border:#DDD5C8;
+    --anthrazit:#2F3230; --anthrazit-soft:#4A4D4B;
+    --gold:#C4A35A; --gold-hover:#A8893D; --gold-light:#E8D5A3; --gold-pale:#F5EDD8;
+    --warm-brown:#7A6248; --salbei:#6DB89A; --salbei-pale:#EAF5F0; --salbei-border:#A8D9C5;
+    --rot:#D63B4F; --lila:#8B6DB8;
+    --text-muted:#8A8580; --shadow:rgba(47,50,48,0.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--cream);color:var(--anthrazit);font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-weight:300;min-height:100vh;line-height:1.6;}
+  .page{display:none;min-height:100vh;padding:0 0 60px;}
+  .page.active{display:block;animation:fadeIn 0.4s ease;}
+  .page-inner{max-width:640px;margin:0 auto;padding:32px 20px 0;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes letterDance{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes dotPulse{0%,100%{r:5;opacity:1}50%{r:7;opacity:0.8}}
+  .dance-letter{display:inline-block;animation:letterDance 1.4s ease-in-out infinite;}
+
+  .site-header{background:var(--gold);padding:14px 24px;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .site-header-heart{font-size:20px;color:white;display:inline-block;animation:heartbeat 2.2s ease-in-out infinite;text-shadow:0 0 0 2px rgba(139,109,184,0.5),0 0 10px rgba(139,109,184,0.3);filter:drop-shadow(0 0 3px rgba(139,109,184,0.5));}
+  @keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.25)}30%{transform:scale(1)}45%{transform:scale(1.15)}60%{transform:scale(1)}}
+  @keyframes seinGlow{0%,100%{opacity:0.85}50%{opacity:1;text-shadow:0 0 8px rgba(139,109,184,0.6)}}
+  .sein-s{display:inline-block;animation:seinGlow 1.8s ease-in-out infinite;}
+  .sein-e{display:inline-block;animation:seinGlow 1.8s ease-in-out infinite;animation-delay:0.2s;}
+  .sein-i{display:inline-block;animation:seinGlow 1.8s ease-in-out infinite;animation-delay:0.4s;}
+  .sein-n{display:inline-block;animation:seinGlow 1.8s ease-in-out infinite;animation-delay:0.6s;}
+  .site-header-name{font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:500;letter-spacing:3px;text-transform:uppercase;color:white;}
+  .site-header-sub{font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:9px;font-weight:300;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.9);}
+  .site-header-sein{font-weight:600;color:var(--lila);}
+
+  .title-block{text-align:center;padding:32px 0 24px;border-bottom:1px solid var(--cream-border);margin-bottom:28px;}
+  .title-block h1{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(32px,7vw,50px);font-weight:300;line-height:1.15;color:var(--anthrazit);}
+  .title-block h1 span{color:var(--gold);font-style:italic;}
+  .title-block .subtitle{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:10px;font-weight:400;}
+
+  .disclaimer{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:12px;padding:18px 22px;margin-bottom:24px;font-size:13px;color:var(--warm-brown);line-height:1.6;}
+  .disclaimer strong{display:block;font-weight:500;margin-bottom:5px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;}
+
+  .intro-text{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(18px,3.5vw,22px);font-weight:300;color:var(--anthrazit-soft);line-height:1.75;margin-bottom:24px;text-align:center;}
+  .intro-lines{display:block;margin-top:14px;font-size:clamp(15px,2.8vw,17px);color:var(--text-muted);font-family:'Cormorant Garamond','Georgia',serif;font-weight:300;line-height:2;}
+
+  .bereiche-mini{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:24px;}
+  .bereich-chip{font-size:11px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:20px;border:1px solid;}
+
+  .result-teaser{background:white;border:1px solid var(--cream-border);border-radius:14px;padding:18px 22px;margin-bottom:28px;text-align:center;}
+  .result-teaser-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:8px;}
+  .result-teaser-text{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(15px,3vw,18px);color:var(--anthrazit-soft);line-height:1.65;}
+
+  .btn-primary{display:block;width:100%;max-width:300px;margin:0 auto;padding:17px 32px;background:var(--gold);color:white;font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:400;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 18px rgba(196,163,90,0.35);}
+  .btn-primary:hover{background:var(--gold-hover);transform:translateY(-2px);}
+  .btn-secondary{display:block;width:100%;max-width:300px;margin:10px auto 0;padding:14px 32px;background:transparent;color:var(--anthrazit);font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--cream-border);border-radius:50px;cursor:pointer;transition:all 0.3s ease;}
+  .btn-secondary:hover{border-color:var(--gold);color:var(--warm-brown);}
+  .btn-warm{display:block;width:100%;max-width:300px;margin:0 auto;padding:17px 32px;background:var(--warm-brown);color:white;font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:400;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;transition:all 0.3s ease;}
+  .btn-warm:hover{background:#6A5238;transform:translateY(-2px);}
+
+  .progress-wrap{margin-bottom:28px;}
+  .progress-label{display:flex;justify-content:space-between;font-size:11px;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;}
+  .progress-bar{height:2px;background:var(--cream-border);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.4s ease;}
+
+  .area-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:10px;text-align:center;}
+  .question-card{background:white;border-radius:18px;padding:30px 26px;box-shadow:0 4px 20px var(--shadow);margin-bottom:22px;border:1px solid var(--cream-border);}
+  .question-text{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(19px,4vw,24px);font-weight:300;color:var(--anthrazit);line-height:1.5;margin-bottom:26px;text-align:center;}
+
+  .scale-wrap{display:flex;flex-direction:column;gap:8px;}
+  .scale-option{display:flex;align-items:center;gap:14px;padding:12px 18px;border:1px solid var(--cream-border);border-radius:10px;cursor:pointer;transition:all 0.2s ease;background:var(--cream);}
+  .scale-option:hover,.scale-option.selected{border-color:var(--gold);background:var(--gold-pale);}
+  .scale-dot{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--cream-border);background:white;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--text-muted);transition:all 0.2s ease;}
+  .scale-option.selected .scale-dot{background:var(--gold);border-color:var(--gold);color:white;}
+  .scale-text{font-size:13px;color:var(--anthrazit-soft);font-weight:300;}
+
+  .nav-wrap{display:flex;justify-content:space-between;gap:10px;}
+  .btn-nav{padding:11px 24px;border-radius:50px;font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:400;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s ease;border:1px solid var(--cream-border);background:transparent;color:var(--text-muted);}
+  .btn-nav:hover{border-color:var(--gold);color:var(--warm-brown);}
+  .btn-nav.next{background:var(--gold);color:white;border-color:var(--gold);}
+  .btn-nav.next:hover{background:var(--gold-hover);}
+  .btn-nav:disabled{opacity:0.3;cursor:not-allowed;}
+
+  .result-header{text-align:center;padding:28px 0 24px;border-bottom:1px solid var(--cream-border);margin-bottom:28px;}
+  .result-tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:12px;}
+  .result-title{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(20px,4vw,28px);font-weight:300;color:var(--anthrazit);line-height:1.3;margin-bottom:6px;}
+  .result-area{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(26px,6vw,42px);font-weight:400;color:var(--gold);font-style:italic;margin-bottom:10px;}
+  .result-area-explain{font-size:14px;color:var(--text-muted);line-height:1.6;max-width:400px;margin:0 auto 10px;font-style:italic;}
+  .result-date{font-size:11px;letter-spacing:1.5px;color:var(--cream-border);text-transform:uppercase;margin-top:6px;}
+  .result-snapshot{font-size:12px;color:var(--text-muted);font-style:italic;margin-top:8px;}
+
+  .chart-wrap{background:white;border-radius:18px;padding:28px 20px;box-shadow:0 4px 20px var(--shadow);border:1px solid var(--cream-border);margin-bottom:20px;text-align:center;}
+  .chart-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+  .chart-explain{font-family:'Cormorant Garamond','Georgia',serif;font-size:14px;color:var(--text-muted);font-style:italic;margin-bottom:16px;line-height:1.6;}
+
+  /* SALBEI CARD für Ergebnis */
+  .salbei-title-bar{background:var(--salbei-pale);border:1px solid var(--salbei-border);border-radius:14px 14px 0 0;padding:14px 22px;}
+  .salbei-title-bar p{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--salbei);font-weight:500;}
+  .result-card{background:var(--salbei-pale);border-radius:0 0 18px 18px;padding:28px 26px;box-shadow:0 4px 20px var(--shadow);border:1px solid var(--salbei-border);border-top:none;margin-bottom:20px;}
+  .result-body{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3.2vw,20px);color:var(--anthrazit-soft);line-height:1.7;}
+  .result-body p{margin-bottom:10px;}
+  .result-body p:last-child{margin-bottom:0;}
+
+  .next-step-card{background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:14px;padding:22px 26px;margin-bottom:20px;}
+  .next-step-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--warm-brown);font-weight:500;margin-bottom:10px;}
+  .next-step-text{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(15px,3vw,18px);color:var(--anthrazit);line-height:1.55;}
+
+  .answers-wrap{background:var(--cream-dark);border-radius:14px;padding:22px 26px;margin-bottom:20px;}
+  .answers-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-muted);font-weight:500;margin-bottom:16px;}
+  .answers-area{margin-bottom:18px;}
+  .answers-area:last-child{margin-bottom:0;}
+  .answers-area-name{font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:8px;}
+  .answer-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:7px;}
+  .answer-dots{display:flex;gap:3px;flex-shrink:0;padding-top:3px;}
+  .answer-dot{width:9px;height:9px;border-radius:50%;background:var(--cream-border);}
+  .answer-dot.filled{background:var(--gold);}
+  .answer-q{font-size:12px;line-height:1.5;color:var(--text-muted);}
+
+  .overall-card{background:rgba(214,59,79,0.07);border:1px solid rgba(214,59,79,0.15);border-radius:18px;padding:28px 26px;text-align:center;margin-bottom:28px;}
+  .overall-title{margin-bottom:16px;}
+  .overall-card p{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3.2vw,20px);color:var(--anthrazit-soft);line-height:1.75;margin-bottom:10px;}
+  .overall-card p:last-child{margin-bottom:0;}
+  .overall-disclaimer{font-size:12px;color:var(--text-muted);margin-top:16px;font-style:italic;line-height:1.6;}
+
+  .reflection-wrap{background:var(--cream-dark);border-radius:14px;padding:22px 26px;margin-bottom:20px;}
+  .reflection-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-muted);font-weight:500;margin-bottom:12px;}
+  .reflection-text{font-size:14px;color:var(--anthrazit-soft);line-height:1.65;margin-bottom:14px;}
+  .prompt-box{background:white;border:1px solid var(--cream-border);border-radius:10px;padding:16px 18px;font-family:'Cormorant Garamond','Georgia',serif;font-size:15px;color:var(--anthrazit-soft);line-height:1.65;font-style:italic;margin-bottom:14px;}
+  .copy-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:transparent;border:1px solid var(--cream-border);border-radius:50px;font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:400;letter-spacing:2px;text-transform:uppercase;color:var(--anthrazit-soft);cursor:pointer;transition:all 0.2s ease;}
+  .copy-btn:hover,.copy-btn.copied{border-color:var(--gold);color:var(--warm-brown);}
+
+  .section-divider{display:flex;align-items:center;gap:14px;margin:32px 0 26px;}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--cream-border);}
+  .cta-block{text-align:center;margin-bottom:28px;}
+  .cta-heading{font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(20px,4.5vw,28px);font-weight:300;color:var(--anthrazit);margin-bottom:14px;line-height:1.35;}
+  .cta-text{font-size:14px;color:var(--text-muted);line-height:1.75;margin-bottom:20px;max-width:460px;margin-left:auto;margin-right:auto;}
+  .cta-text p{margin-bottom:8px;}
+  .cta-title-small{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:10px;}
+
+  .webinar-list{background:white;border:1px solid var(--cream-border);border-radius:14px;padding:20px 22px;margin-bottom:20px;text-align:left;}
+  .webinar-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--cream-border);}
+  .webinar-item:last-child{border-bottom:none;padding-bottom:0;}
+  .webinar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+  .webinar-text{font-size:14px;color:var(--anthrazit-soft);line-height:1.5;}
+  .webinar-text strong{display:block;font-weight:500;color:var(--anthrazit);font-size:14px;margin-bottom:2px;}
+
+  .proven-bar{text-align:center;padding:16px;border-top:1px solid var(--cream-border);margin-top:20px;}
+  .proven-link{font-size:13px;color:var(--text-muted);text-decoration:none;letter-spacing:0.5px;transition:color 0.2s ease;}
+  .proven-link:hover{color:var(--gold);text-decoration:underline;}
+
+  .page-footer{text-align:center;margin-top:50px;padding-top:20px;border-top:1px solid var(--cream-border);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);}
+
+  @media print{
+    .site-header,.btn-primary,.btn-secondary,.btn-warm,.btn-nav,.copy-btn,.cta-block,.webinar-list,.section-divider,.reflection-wrap,.proven-bar{display:none!important;}
+    .page{display:block!important;}
+    #page-start,#page-questions{display:none!important;}
+  }
+  @media(max-width:480px){
+    .question-card{padding:22px 16px;}
+    .result-card{padding:20px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- START -->
+<div id="page-start" class="page active">
+  <header class="site-header">
+    <span class="site-header-heart">♥</span>
+    <span class="site-header-name">Van Asten Coaching</span>
+    <span class="site-header-sub">Bewusst<span class="site-header-sein"><span class="sein-s">S</span><span class="sein-e">E</span><span class="sein-i">I</span><span class="sein-n">N</span></span>swerkstatt</span>
+  </header>
+  <div class="page-inner">
+    <div class="title-block">
+      <h1>SEIN<span style="color:var(--gold)">s</span>Code<br>Moment-Check</h1>
+      <p class="subtitle">Wo bist du gerade mehr im Funktionieren als im SEIN?</p>
+    </div>
+    <div class="disclaimer">
+      <strong>Hinweis</strong>
+      Dieser Moment-Check dient deiner persönlichen Reflexion und Selbstwahrnehmung. Er ist kein psychologischer Test, keine Diagnose und ersetzt keine medizinische, psychotherapeutische oder psychiatrische Behandlung. Es werden keine Heilversprechen gegeben. Bei körperlichen oder psychischen Beschwerden wende dich bitte an entsprechend qualifizierte Fachpersonen.
+    </div>
+
+    <p class="intro-text">
+      Schön, dass du dir jetzt Zeit für dich nimmst.<br>
+      Starte diesen Moment-Check nur, wenn du wirklich fünf ruhige Minuten für dich hast.
+      <span class="intro-lines">
+        Er zeigt dir, wo du gerade viel trägst.<br>
+        Wo du vielleicht wenig bei dir bist.<br>
+        Und wo dein SEIN wieder mehr Raum bekommen darf.
+      </span>
+    </p>
+    <div class="bereiche-mini">
+      <span class="bereich-chip" style="color:#6DB89A;border-color:#6DB89A;cursor:pointer" onclick="showBereich('klarheit')">Klarheit</span>
+      <span class="bereich-chip" style="color:#D63B4F;border-color:#D63B4F;cursor:pointer" onclick="showBereich('koerper')">Körper</span>
+      <span class="bereich-chip" style="color:#C4A35A;border-color:#C4A35A;cursor:pointer" onclick="showBereich('kapital')">Kapital</span>
+      <span class="bereich-chip" style="color:#8B6DB8;border-color:#8B6DB8;cursor:pointer" onclick="showBereich('kontakt')">Kontakt</span>
+      <span class="bereich-chip" style="color:#8B6842;border-color:#8B6842;cursor:pointer" onclick="showBereich('kraft')">Kraft</span>
+    </div>
+    <div id="bereich-info" style="display:none;background:white;border:1px solid var(--cream-border);border-radius:12px;padding:16px 20px;margin-bottom:16px;animation:fadeIn 0.3s ease">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div>
+          <p id="bereich-info-title" style="font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:6px"></p>
+          <p id="bereich-info-text" style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(15px,3vw,17px);color:var(--anthrazit-soft);line-height:1.65"></p>
+        </div>
+        <span onclick="document.getElementById('bereich-info').style.display='none'" style="cursor:pointer;color:var(--text-muted);font-size:18px;flex-shrink:0;padding:2px 6px">×</span>
+      </div>
+    </div>
+    <div class="result-teaser">
+      <p class="result-teaser-label">Was dich erwartet</p>
+      <p class="result-teaser-text">20 kurze Fragen in 5 Bereichen. Du brauchst etwa 5 Minuten. Am Ende siehst du als persönliches Bild, in welchem Bereich du gerade wenig Energie hast. Genau dort darf sanft hingeschaut werden.</p>
+    </div>
+    <button class="btn-primary" onclick="startCheck()">Moment-Check starten</button>
+    <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--text-muted);line-height:1.6">🔒 Dieser Check speichert keine Daten. Alle Eingaben bleiben nur auf deinem Gerät.</p>
+    <div class="page-footer">SEINsCode · Van Asten Coaching</div>
+  </div>
+</div>
+
+<!-- QUESTIONS -->
+<div id="page-questions" class="page">
+  <header class="site-header">
+    <span class="site-header-heart">♥</span>
+    <span class="site-header-name">Van Asten Coaching</span>
+    <span class="site-header-sub">Bewusst<span class="site-header-sein"><span class="sein-s">S</span><span class="sein-e">E</span><span class="sein-i">I</span><span class="sein-n">N</span></span>swerkstatt</span>
+  </header>
+  <div class="page-inner">
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-area"></span>
+        <span id="progress-num"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="area-label" id="q-area-label"></div>
+    <div class="question-card">
+      <p class="question-text" id="q-text"></p>
+      <div class="scale-wrap" id="scale-wrap"></div>
+    </div>
+    <div class="nav-wrap">
+      <button class="btn-nav" id="btn-back" onclick="prevQuestion()">Zurück</button>
+      <button class="btn-nav next" id="btn-next" onclick="nextQuestion()" disabled>Weiter</button>
+    </div>
+    <div class="page-footer">SEINsCode · Van Asten Coaching</div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="page-result" class="page">
+  <header class="site-header">
+    <span class="site-header-heart">♥</span>
+    <span class="site-header-name">Van Asten Coaching</span>
+    <span class="site-header-sub">Bewusst<span class="site-header-sein"><span class="sein-s">S</span><span class="sein-e">E</span><span class="sein-i">I</span><span class="sein-n">N</span></span>swerkstatt</span>
+  </header>
+  <div class="page-inner">
+
+    <div class="result-header">
+      <p class="result-tag">Dein Ergebnis</p>
+      <p class="result-title">Deine Einladung liegt im Bereich</p>
+      <p class="result-area" id="result-area-name"></p>
+      <p class="result-area-explain" id="result-area-explain"></p>
+      <p class="result-date" id="result-date"></p>
+      <p class="result-snapshot">Dies ist eine Momentaufnahme. In ein paar Stunden kann es schon wieder anders sein.</p>
+    </div>
+    <div style="text-align:center;background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:14px;padding:18px 22px;margin-bottom:20px">
+      <p style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3vw,19px);color:var(--anthrazit-soft);line-height:1.75;font-style:italic">Bevor du weiterliest: Atme einmal tief ein und langsam wieder aus.<br>Lass das Ergebnis kurz ankommen.</p>
+    </div>
+
+    <div class="chart-wrap">
+      <p class="chart-label">Dein SEIN<span style="color:var(--gold)">s</span>Code-Kompass</p>
+      <p class="chart-explain">Hohe Punkte bedeuten viel Energie in diesem Bereich. Wenig Punkte zeigen dir, wo gerade Mangel spürbar sein könnte.</p>
+      <svg id="spider-chart" viewBox="0 0 320 300" width="100%" style="max-width:320px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+
+    <div class="salbei-title-bar">
+      <p>Was das für dich bedeuten könnte</p>
+    </div>
+    <div class="result-card">
+      <div class="result-body" id="result-body"></div>
+    </div>
+
+    <div class="next-step-card">
+      <p class="next-step-label">Ich lade dich ein</p>
+      <div class="next-step-text" id="result-next-step"></div>
+    </div>
+
+    <div class="answers-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:4px 0" onclick="toggleAnswers()">
+        <p class="answers-label" style="margin-bottom:0">So hast du geantwortet</p>
+        <span id="answers-toggle-icon" style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;transition:all 0.3s"><span id="toggle-label">anzeigen</span> <span style="font-size:16px;transition:transform 0.3s" id="toggle-arrow">▾</span></span>
+      </div>
+      <div id="answers-detail" style="display:none;margin-top:16px"></div>
+    </div>
+
+    <div class="overall-card">
+      <p class="overall-title" style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(20px,4vw,26px);font-weight:400;color:var(--rot);letter-spacing:1px;text-transform:none;margin-bottom:16px" id="congrats-title">Herzlichen Glückwunsch</p>
+      <p>Beglückwünsche dich. Klopf dir auf die Schulter.</p>
+      <p>Du hast dir gerade fünf Minuten nur für dich genommen und vielleicht etwas Wichtiges für dich wahrgenommen. Das tun die wenigsten.</p>
+      <p>Vielleicht zeigt sich gerade ein Bereich, der mehr Sanftheit und Aufmerksamkeit in dein Leben einlädt.</p>
+      <p>Nimm nur das mit, was sich für dich stimmig anfühlt.</p>
+      <p class="overall-disclaimer"><strong style="color:#D63B4F;font-weight:600">Hinweis:</strong> Dieser Check ersetzt keine psychologische oder therapeutische Begleitung. Er ist ein persönlicher Reflexionsmoment für dich.</p>
+    </div>
+
+    <div class="reflection-wrap">
+      <p class="reflection-label">Reflexion mit ChatGPT oder einer anderen KI</p>
+      <p class="reflection-text">Manchmal zeigt sich etwas, das noch unscharf bleibt. Öffne ChatGPT, Hedy oder eine andere KI deiner Wahl und kopiere diesen Impuls:</p>
+      <div class="prompt-box" id="prompt-box"></div>
+      <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">
+        <span>⊙</span><span id="copy-label">Prompt kopieren</span>
+      </button>
+    </div>
+
+    <div class="section-divider"><span>✦</span></div>
+
+    <div style="background:var(--cream-dark);border-radius:14px;padding:20px 24px;margin-bottom:24px;text-align:center">
+      <p style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3vw,19px);color:var(--anthrazit-soft);line-height:1.75">Viele Menschen, die diesen Check gemacht haben, erkannten sich in mehr als einem Bereich wieder. Du bist damit nicht allein.</p>
+    </div>
+    <div class="cta-block">
+      <p class="cta-title-small">Wenn du tiefer hinschauen möchtest</p>
+      <h2 class="cta-heading">Kostenfreies SEINsCode-Klarheitsgespräch</h2>
+      <div class="cta-text">
+        <p>Vielleicht hat sich durch den Moment-Check etwas gezeigt. Ein Muster. Eine Frage. Ein Wunsch nach mehr Klarheit.</p>
+        <p>Erfahrungsgemäß ist der beste Moment für einen nächsten Schritt genau jetzt, solange das Gefühl noch frisch ist.</p>
+        <p>Melde dich einfach. Wir schauen gemeinsam hin, was du gerade wirklich brauchst.</p>
+      </div>
+      <a href="mailto:kontakt@vanastencoaching.com" style="text-decoration:none">
+        <button class="btn-primary" style="max-width:280px">Klarheitsgespräch anfragen</button>
+      </a>
+    </div>
+
+    <div class="section-divider"><span>✦</span></div>
+
+    <div class="cta-block">
+      <p class="cta-title-small">Komm in eines unserer Webinare</p>
+      <h2 class="cta-heading">Schau gerne, ob sich ein Webinar für dich stimmig anfühlt</h2>
+      <div class="cta-text">
+        <p>Melde dich einfach bei uns. Wir freuen uns auf dich.</p>
+      </div>
+      <div class="webinar-list">
+        <div class="webinar-item">
+          <div class="webinar-dot" style="background:#6DB89A"></div>
+          <div class="webinar-text">
+            <strong>SEINsCode Webinar</strong>
+            Körperwahrnehmung, emotionale Klärung und Mindset. Wie sie zusammenwirken können.
+          </div>
+        </div>
+        <div class="webinar-item">
+          <div class="webinar-dot" style="background:#C4A35A"></div>
+          <div class="webinar-text">
+            <strong>Hedy Webinar</strong>
+            KI-gestützte Reflexion. Nicht nur im Coaching. Überall dort, wo du Klarheit brauchst.
+          </div>
+        </div>
+        <div class="webinar-item">
+          <div class="webinar-dot" style="background:#8B6DB8"></div>
+          <div class="webinar-text">
+            <strong>5K-Modell Webinar</strong>
+            Unser inneres Kompassmodell. Für alle, die sich und ihr System besser verstehen möchten.
+          </div>
+        </div>
+        <div class="webinar-item">
+          <div class="webinar-dot" style="background:#D63B4F"></div>
+          <div class="webinar-text">
+            <strong>Q&A</strong>
+            Deine Fragen zum SEINsCode, zum 5K-Modell und zu Hedy. Offen, persönlich, ohne Druck. Unsere Webinare laufen mit KI-Unterstützung.
+          </div>
+        </div>
+      </div>
+      <a href="mailto:kontakt@vanastencoaching.com" style="text-decoration:none"><button class="btn-warm" style="max-width:280px">Zum Webinar anmelden</button></a>
+
+      <div style="text-align:center;padding:20px 16px;border-top:1px solid var(--cream-border);border-bottom:1px solid var(--cream-border);margin-top:24px;margin-bottom:0">
+        <a href="https://www.provenexpert.com/de-de/vanastencoaching" target="_blank" class="proven-link">★&nbsp;&nbsp;Über 50 verifizierte Bewertungen auf ProvenExpert ansehen</a>
+      </div>
+    </div>
+
+    <div style="background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:14px;padding:28px 26px;margin-bottom:24px;text-align:center">
+      <p style="font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:300;color:var(--text-muted);line-height:1.8;font-style:italic;margin-bottom:20px">
+        Ich lade dich ein, kurz deine Hand auf dein Herz zu legen.<br>
+        Du musst es nicht. Aber wenn es sich stimmig anfühlt — tu es einfach.
+      </p>
+      <p style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3vw,19px);color:var(--anthrazit-soft);line-height:1.85">
+        Du hast dir heute Zeit für dich genommen. Nicht für andere. Für dich.<br>
+        Du hast hingeschaut und wahrgenommen, was gerade in dir ist.<br>
+        Das ist keine Kleinigkeit. Das ist Mut und Selbstliebe.<br><br>
+        Ich sehe dich.<br>
+        Und ich freue mich, dass du dir diesen Moment geschenkt hast. Wirklich.
+      </p>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:16px;letter-spacing:1px;font-style:italic">Manfred van Asten</p>
+    </div>
+    <div style="text-align:center;margin-bottom:36px;margin-top:32px">
+      <button class="btn-primary" style="max-width:260px;margin-bottom:10px" onclick="printResult()">Ergebnis drucken / speichern</button>
+      <button class="btn-secondary" onclick="restartCheck()">Moment-Check neu starten</button>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:16px;font-style:italic;line-height:1.6">Tipp: Mach diesen Check in 4 Wochen noch einmal und schau, was sich bei dir verändert hat.</p>
+    </div>
+
+    <div class="page-footer">SEINsCode · Van Asten Coaching · Bewusstseinswerkstatt</div>
+  </div>
+</div>
+
+<script>
+const AREAS = ['Klarheit','Körper','Kapital','Kontakt','Kraft'];
+const AREA_COLORS = {'Klarheit':'#6DB89A','Körper':'#D63B4F','Kapital':'#C4A35A','Kontakt':'#8B6DB8','Kraft':'#8B6842'};
+
+// WENIG PUNKTE = MANGEL = EINLADUNG
+// Skala: trifft kaum zu = 3 (gut, viel Energie), trifft sehr stark zu = 0 (Mangel, wenig Energie)
+const SCALE = [
+  {val:3, label:'trifft kaum zu'},
+  {val:2, label:'trifft manchmal zu'},
+  {val:1, label:'trifft häufig zu'},
+  {val:0, label:'trifft sehr stark zu'},
+];
+
+const AREA_EXPLAIN = {
+  'Klarheit':'Hier zeigt sich gerade wenig Energie. Vielleicht kreisen die Gedanken viel. Vielleicht fehlt innere Ruhe und Orientierung.',
+  'Körper':'Hier zeigt sich gerade wenig Energie. Vielleicht werden Körpersignale übergangen. Vielleicht ist mehr Erschöpfung da als wahrgenommen.',
+  'Kapital':'Hier zeigt sich gerade wenig Energie. Vielleicht wird mehr gegeben als zurückkommt. Vielleicht fehlt es an Zeit und Raum für dich selbst.',
+  'Kontakt':'Hier zeigt sich gerade wenig Energie. Vielleicht kostet Verbindung gerade mehr als sie gibt. Vielleicht ist der Kontakt zu dir selbst leise geworden.',
+  'Kraft':'Hier zeigt sich gerade wenig Energie. Vielleicht läuft vieles auf Autopilot. Vielleicht sehnt sich etwas nach mehr innerer Stärke und Lebendigkeit.',
+};
+
+const QUESTIONS = [
+  {area:'Klarheit', text:'Ich denke viel nach, komme innerlich aber nicht wirklich zur Ruhe.'},
+  {area:'Klarheit', text:'Ich treffe Entscheidungen oft aus Pflichtgefühl statt aus innerer Klarheit.'},
+  {area:'Klarheit', text:'Ich weiß manchmal gar nicht genau, was ich wirklich brauche.'},
+  {area:'Klarheit', text:'Ich spüre manchmal eine innere Unruhe, die ich nicht genau benennen kann. Sie ist einfach da.'},
+  {area:'Körper',   text:'Ich übergehe Müdigkeit, Anspannung oder Verspannungen oft einfach.'},
+  {area:'Körper',   text:'Ich merke meist erst spät, dass mir etwas zu viel geworden ist.'},
+  {area:'Körper',   text:'Ich bemerke körperliche Anzeichen von Erschöpfung. Und mache trotzdem weiter.'},
+  {area:'Körper',   text:'Ich gönne mir selten bewusste Pausen, auch wenn mein Körper danach verlangt.'},
+  {area:'Kapital',  text:'Ich gebe oft mehr Zeit, Energie oder Aufmerksamkeit, als mir guttut.'},
+  {area:'Kapital',  text:'Ich sage Ja, obwohl ich innerlich eigentlich Nein spüre.'},
+  {area:'Kapital',  text:'Ich investiere meine Kraft oft zuerst in andere und erst später in mich.'},
+  {area:'Kapital',  text:'Ich frage mich manchmal, ob meine Energie wirklich dort ankommt, wo sie mir guttut.'},
+  {area:'Kontakt',  text:'Ich passe mich manchmal an, um keinen Konflikt auszulösen.'},
+  {area:'Kontakt',  text:'Es fällt mir manchmal schwer, nach außen zu zeigen, wie es mir wirklich geht.'},
+  {area:'Kontakt',  text:'Ich halte Verbindung aufrecht, auch wenn sie mich Kraft kostet.'},
+  {area:'Kontakt',  text:'Ich spüre manchmal eine Distanz zu mir selbst. Als wäre ich mehr für andere da als für mich.'},
+  {area:'Kraft',    text:'Ich funktioniere häufig, obwohl ich innerlich erschöpft bin.'},
+  {area:'Kraft',    text:'Ich sehne mich nach mehr Leichtigkeit, Ruhe und Selbstkontakt.'},
+  {area:'Kraft',    text:'Ich möchte wieder mehr aus mir selbst heraus leben statt nur zu reagieren.'},
+  {area:'Kraft',    text:'Mir fehlt gerade das Gefühl, wirklich ich selbst zu sein. Nicht nur zu funktionieren.'},
+];
+
+const RESULTS = {
+  'Klarheit':{
+    body:`<p>Vielleicht bist du gerade viel im Kopf. Du denkst, sortierst, planst und hältst innerlich vieles zusammen.</p><p>Dieser Bereich könnte dich einladen, wieder einfacher zu fragen: Was ist gerade wirklich wichtig? Was brauche ich jetzt?</p>`,
+    step:`Nimm dir heute drei Minuten. Kein Handy, kein Multitasking. Nur du und ein Blatt Papier. Schreibe diesen einen Satz zu Ende und lass kommen, was kommt:<br><br><em>Gerade brauche ich …</em><br><br>Manchmal reicht ein ehrlicher Satz, um wieder klarer zu werden.`
+  },
+  'Körper':{
+    body:`<p>Vielleicht hast du lange funktioniert und dabei feine Signale übergangen.</p><p>Müdigkeit, Anspannung oder innere Unruhe müssen nichts beweisen. Sie dürfen einfach Hinweise sein.</p><p>Dieser Bereich könnte dich einladen, wieder freundlicher hinzuspüren.</p>`,
+    step:`Leg jetzt oder heute Abend eine Hand auf deinen Bauch oder Brustraum. Schließ kurz die Augen. Atme einmal durch. Und frage dich ganz sanft:<br><br><em>Was spüre ich gerade?</em><br><br>Du brauchst keine Antwort. Das Hinspüren allein ist schon der erste Schritt.`
+  },
+  'Kapital':{
+    body:`<p>Vielleicht gibst du gerade mehr als dir guttut. Zeit. Energie. Aufmerksamkeit.</p><p>Nicht weil du falsch bist. Vielleicht weil du es gewohnt bist, zuerst an andere zu denken.</p><p>Dieser Bereich könnte dich einladen, deine Ressourcen wieder bewusster wahrzunehmen.</p>`,
+    step:`Halte heute einen Moment inne. Nur kurz. Und frage dich ehrlich:<br><br><em>Wo gebe ich gerade mehr, als mir guttut?</em><br><br>Du musst nichts sofort ändern. Aber das Wahrnehmen ist der Anfang von mehr Selbstfürsorge.`
+  },
+  'Kontakt':{
+    body:`<p>Vielleicht passt du dich manchmal an, um Verbindung zu halten oder Konflikte zu vermeiden.</p><p>Das ist nicht falsch. Vielleicht war es einmal wichtig.</p><p>Und vielleicht darf heute ein kleiner ehrlicherer Kontakt zu dir selbst beginnen.</p>`,
+    step:`Schau heute einmal ehrlich bei dir hin:<br><br><em>Wo sage ich Ja, obwohl in mir ein leises Nein spürbar ist?</em><br><br>Du musst es noch niemandem sagen. Aber dir selbst darf es bewusst werden.`
+  },
+  'Kraft':{
+    body:`<p>Vielleicht funktionierst du gerade viel und spürst gleichzeitig den Wunsch nach mehr Ruhe, Leichtigkeit und innerer Stärke.</p><p>Dieser Bereich könnte dich einladen, nicht noch mehr zu leisten. Sondern wieder mehr aus dir selbst heraus zu leben.</p>`,
+    step:`Setz dich kurz hin. Nur für einen Moment. Und vervollständige diesen Satz in Ruhe:<br><br><em>Ein kleines Stück mehr Kraft würde für mich bedeuten …</em><br><br>Lass kommen, was kommt. Es gibt keine falsche Antwort.`
+  }
+};
+
+let current = 0;
+let answers = new Array(20).fill(null);
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startCheck(){showPage('page-questions');renderQuestion();}
+
+function renderQuestion(){
+  const q=QUESTIONS[current];
+  document.getElementById('q-area-label').textContent=q.area;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('progress-area').textContent=q.area;
+  document.getElementById('progress-num').textContent=(current+1)+' / '+QUESTIONS.length;
+  document.getElementById('progress-fill').style.width=(current/QUESTIONS.length*100)+'%';
+  const wrap=document.getElementById('scale-wrap');
+  wrap.innerHTML='';
+  SCALE.forEach(s=>{
+    const div=document.createElement('div');
+    div.className='scale-option'+(answers[current]===s.val?' selected':'');
+    div.innerHTML=`<div class="scale-dot"></div><span class="scale-text">${s.label}</span>`;
+    div.onclick=()=>selectAnswer(s.val);
+    wrap.appendChild(div);
+  });
+  document.getElementById('btn-back').style.visibility=current===0?'hidden':'visible';
+  document.getElementById('btn-next').disabled=answers[current]===null;
+  document.getElementById('btn-next').textContent=current===QUESTIONS.length-1?'Auswertung':'Weiter';
+}
+
+function selectAnswer(val){
+  answers[current]=val;
+  document.querySelectorAll('.scale-option').forEach((el,i)=>el.classList.toggle('selected',SCALE[i].val===val));
+  document.getElementById('btn-next').disabled=false;
+}
+
+function nextQuestion(){
+  if(current<QUESTIONS.length-1){current++;renderQuestion();}
+  else showResult();
+}
+function prevQuestion(){if(current>0){current--;renderQuestion();}}
+
+function showResult(){
+  const scores={};
+  AREAS.forEach(a=>scores[a]=0);
+  QUESTIONS.forEach((q,i)=>scores[q.area]+=(answers[i]||0));
+
+  // WENIG PUNKTE = MANGEL = EINLADUNG
+  const min=Math.min(...Object.values(scores));
+  const losers=AREAS.filter(a=>scores[a]===min);
+
+  let areaName,bodyHTML,stepHTML;
+  if(losers.length>1){
+    areaName=losers.join(' & ');
+    bodyHTML=`<p>Vielleicht trägst du gerade in mehreren Bereichen gleichzeitig viel. Das ist kein Zeichen von Schwäche.</p><p>Es ist ein Zeichen, dass du dir selbst gerade etwas sehr Wichtiges schenkst: du hast innegehalten und hingeschaut.</p><p>Frag dich heute in Ruhe: In welchem Bereich würde sich ein kleiner Schritt nach innen am stimmigsten anfühlen?</p>`;
+    stepHTML=`Wähle heute nur einen einzigen Bereich aus. Den, der sich gerade am lautesten meldet. Und nur dort einen kleinen ehrlichen Satz aufzuschreiben:<br><br><em>Hier darf ich heute sanfter mit mir sein: …</em>`;
+  } else {
+    areaName=losers[0];
+    bodyHTML=RESULTS[areaName].body;
+    stepHTML=RESULTS[areaName].step;
+  }
+
+  document.getElementById('result-area-name').textContent=areaName;
+  document.getElementById('result-area-explain').textContent=losers.length>1?'':(AREA_EXPLAIN[areaName]||'');
+  document.getElementById('result-body').innerHTML=bodyHTML;
+  document.getElementById('result-next-step').innerHTML=stepHTML;
+
+  const now=new Date();
+  document.getElementById('result-date').textContent='Check vom '+now.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+
+  const promptText=`Ich habe gerade den SEINsCode Moment-Check gemacht. Meine Einladung liegt im Bereich ${areaName}. Bitte begleite mich ruhig, warm und ohne Druck. Stelle mir nacheinander maximal fünf Reflexionsfragen, die mir helfen, diesen Bereich achtsam wahrzunehmen. Bitte gib keine Diagnose, keine Therapieempfehlung und kein Heilversprechen. Unterstütze mich nur dabei, klarer zu erkennen, was ich gerade brauche und welcher kleine nächste Schritt stimmig sein könnte.`;
+  document.getElementById('prompt-box').textContent=promptText;
+  document.getElementById('prompt-box').dataset.prompt=promptText;
+
+  drawSpider(scores);
+  drawAnswers(scores);
+  showPage('page-result');
+  // Animate Herzlichen Glückwunsch
+  setTimeout(()=>{
+    const title = document.getElementById('congrats-title');
+    if(title){
+      const text = title.textContent;
+      title.innerHTML = text.split('').map((char,i) => 
+        char === ' ' ? ' ' : `<span class="dance-letter" style="animation-delay:${i*0.08}s">${char}</span>`
+      ).join('');
+    }
+  }, 800);
+}
+
+function drawSpider(scores){
+  const svg=document.getElementById('spider-chart');
+  svg.innerHTML='';
+  const cx=160,cy=150,r=100,n=AREAS.length,max=12;
+  function pt(i,val){
+    const angle=(Math.PI*2*i/n)-Math.PI/2;
+    const d=(val/max)*r;
+    return{x:cx+d*Math.cos(angle),y:cy+d*Math.sin(angle)};
+  }
+  function outer(i,dist){
+    const angle=(Math.PI*2*i/n)-Math.PI/2;
+    return{x:cx+dist*Math.cos(angle),y:cy+dist*Math.sin(angle)};
+  }
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const pts=AREAS.map((_,i)=>outer(i,r*f));
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points',pts.map(p=>`${p.x},${p.y}`).join(' '));
+    poly.setAttribute('fill','none');poly.setAttribute('stroke','#DDD5C8');poly.setAttribute('stroke-width','1');
+    svg.appendChild(poly);
+  });
+  AREAS.forEach((_,i)=>{
+    const op=outer(i,r);
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',cx);line.setAttribute('y1',cy);
+    line.setAttribute('x2',op.x);line.setAttribute('y2',op.y);
+    line.setAttribute('stroke','#DDD5C8');line.setAttribute('stroke-width','1');
+    svg.appendChild(line);
+  });
+  const dpts=AREAS.map((a,i)=>pt(i,scores[a]));
+  const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points',dpts.map(p=>`${p.x},${p.y}`).join(' '));
+  poly.setAttribute('fill','rgba(196,163,90,0.15)');poly.setAttribute('stroke','#C4A35A');
+  poly.setAttribute('stroke-width','2');poly.setAttribute('stroke-linejoin','round');
+  svg.appendChild(poly);
+  AREAS.forEach((a,i)=>{
+    const p=dpts[i];
+    const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r','5');
+    c.setAttribute('fill',AREA_COLORS[a]);c.setAttribute('stroke','white');c.setAttribute('stroke-width','2');
+    c.style.animation='dotPulse 2s ease-in-out infinite';
+    c.style.animationDelay=(i*0.3)+'s';
+    svg.appendChild(c);
+    const lp=outer(i,r+22);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',lp.x);t.setAttribute('y',lp.y);
+    t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+    t.setAttribute('font-family','Jost,sans-serif');t.setAttribute('font-size','11');
+    t.setAttribute('fill',AREA_COLORS[a]);
+    t.textContent=a;
+    svg.appendChild(t);
+    const sp=outer(i,r+36);
+    const st=document.createElementNS('http://www.w3.org/2000/svg','text');
+    st.setAttribute('x',sp.x);st.setAttribute('y',sp.y);
+    st.setAttribute('text-anchor','middle');st.setAttribute('dominant-baseline','middle');
+    st.setAttribute('font-family','Jost,sans-serif');st.setAttribute('font-size','9');
+    st.setAttribute('fill','#8A8580');
+    st.textContent=scores[a]+'/12';
+    svg.appendChild(st);
+  });
+}
+
+function drawAnswers(scores){
+  const wrap=document.getElementById('answers-detail');
+  wrap.innerHTML='';
+  AREAS.forEach(area=>{
+    const qs=QUESTIONS.map((q,i)=>({...q,idx:i})).filter(q=>q.area===area);
+    const div=document.createElement('div');
+    div.className='answers-area';
+    div.innerHTML=`<p class="answers-area-name" style="color:${AREA_COLORS[area]}">${area}. ${scores[area]}/12</p>`;
+    qs.forEach(q=>{
+      const raw=answers[q.idx];
+      const filled=raw===null?0:(3-raw); // Punkte die gefüllt sind = Mangel-Anzeige
+      const row=document.createElement('div');
+      row.className='answer-row';
+      let dots='';
+      for(let d=0;d<4;d++) dots+=`<div class="answer-dot${d<filled?' filled':''}"></div>`;
+      row.innerHTML=`<div class="answer-dots">${dots}</div><span class="answer-q">${q.text}</span>`;
+      div.appendChild(row);
+    });
+    wrap.appendChild(div);
+  });
+}
+
+function copyPrompt(){
+  const text=document.getElementById('prompt-box').dataset.prompt;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copy-btn');
+    const lbl=document.getElementById('copy-label');
+    btn.classList.add('copied');lbl.textContent='Prompt kopiert.';
+    setTimeout(()=>{btn.classList.remove('copied');lbl.textContent='Prompt kopieren';},3000);
+  });
+}
+
+const BEREICH_INFO = {
+  'klarheit': {
+    color: '#6DB89A',
+    title: 'K1 · Klarheit',
+    text: 'Klarheit steht für deinen inneren Kopf: deine Gedanken, Entscheidungen und mentale Ruhe. Echte Klarheit entsteht, wenn Kopf und Herz übereinstimmen. Das ist leider nicht immer selbstverständlich. Bist du innerlich klar? Oder verlierst du dich oft im Denken, Abwägen und Funktionieren?'
+  },
+  'koerper': {
+    color: '#D63B4F',
+    title: 'K2 · Körper',
+    text: 'Körper steht für deine Körperwahrnehmung: Müdigkeit, Anspannung, Signale und Selbstkontakt. Dein Körper speichert Erfahrungen und Emotionen, oft lange bevor dein Kopf sie benennen kann. Spürst du deinen Körper? Oder übergibst du seine Signale im Alltag?'
+  },
+  'kapital': {
+    color: '#C4A35A',
+    title: 'K3 · Kapital',
+    text: 'Kapital steht für Wert. Das Kapital in dir und auf deinem Konto. Deine Energie, Zeit und Aufmerksamkeit sind dein inneres Kapital. Dein Selbstwert bestimmt deinen Geldwert. Hier lohnt es sich, genauer hinzuschauen. Setzt du deine Ressourcen bewusst ein? Oder gibst du mehr, als dir guttut?'
+  },
+  'kontakt': {
+    color: '#8B6DB8',
+    title: 'K4 · Kontakt',
+    text: 'Kontakt steht für die Verbindung zu dir selbst und zu anderen Menschen. Manche verlieren den Kontakt zu sich. Andere halten an Verbindungen fest, auch wenn sie Kraft kosten. Beides darf hier hingeschaut werden. Bist du wirklich in Kontakt mit dem, was du fühlst und brauchst?'
+  },
+  'kraft': {
+    color: '#8B6842',
+    title: 'K5 · Kraft',
+    text: 'Kraft ist nicht Leistung. Kraft ist Lebendigkeit. Das Gefühl, aus dir selbst heraus zu leben und nicht nur zu reagieren. Wenn du in deiner inneren Kraft bist, strahlt das auf alle anderen Bereiche aus. Dein Leben kommt in Balance. Finanziell frei, erfüllt, glücklich: wie das für dich aussieht, das ist für jeden anders. Wie nah bist du gerade diesem Gefühl?'
+  }
+};
+
+function showBereich(key) {
+  const info = BEREICH_INFO[key];
+  const box = document.getElementById('bereich-info');
+  const title = document.getElementById('bereich-info-title');
+  const text = document.getElementById('bereich-info-text');
+  title.textContent = info.title;
+  title.style.color = info.color;
+  text.textContent = info.text;
+  box.style.display = 'block';
+  box.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function shareResult(){
+  const area = document.getElementById('result-area-name').textContent;
+  const date = document.getElementById('result-date').textContent;
+  const text = `Mein SEINsCode Moment-Check Ergebnis (${date}):\n\nMeine Einladung liegt im Bereich: ${area}\n\nErstellt mit dem SEINsCode Moment-Check von Van Asten Coaching – BewusstSEINswerkstatt`;
+  
+  // Try Web Share API first (works on mobile)
+  if (navigator.share) {
+    navigator.share({
+      title: 'Mein SEINsCode Ergebnis',
+      text: text
+    });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      btn.textContent = 'Kopiert! Jetzt einfügen.';
+      setTimeout(() => { btn.textContent = 'Ergebnis teilen'; }, 3000);
+    });
+  }
+}
+
+function printResult(){
+  // Open answers before printing
+  const detail = document.getElementById('answers-detail');
+  const wasHidden = detail.style.display === 'none';
+  if(wasHidden) detail.style.display = 'block';
+  window.print();
+  if(wasHidden) detail.style.display = 'none';
+}
+
+function toggleAnswers(){
+  const detail = document.getElementById('answers-detail');
+  const arrow = document.getElementById('toggle-arrow');
+  const label = document.getElementById('toggle-label');
+  if(detail.style.display==='none'){
+    detail.style.display='block';
+    arrow.style.transform='rotate(180deg)';
+    label.textContent='ausblenden';
+  } else {
+    detail.style.display='none';
+    arrow.style.transform='rotate(0deg)';
+    label.textContent='anzeigen';
+  }
+}
+
+function copyResult(){
+  const area = document.getElementById('result-area-name').textContent;
+  const date = document.getElementById('result-date').textContent;
+  const explain = document.getElementById('result-area-explain').textContent;
+  const body = document.getElementById('result-body').innerText;
+  const step = document.getElementById('result-next-step').innerText;
+  const text = `SEINsCode Moment-Check\n${date}\n\nDeine Einladung liegt im Bereich: ${area}\n\n${explain}\n\n${body}\n\nEinladung:\n${step}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.getElementById('copy-result-btn');
+    btn.textContent='Kopiert!';
+    setTimeout(()=>{btn.textContent='Ergebnis als Text kopieren';},3000);
+  });
+}
+
+function restartCheck(){
+  current=0;answers=new Array(20).fill(null);showPage('page-start');
+}
+</script>
+</body>
+</html>
