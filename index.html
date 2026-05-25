@@ -23,6 +23,36 @@
   @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   @keyframes letterDance{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
   @keyframes dotPulse{0%,100%{r:5;opacity:1}50%{r:7;opacity:0.8}}
+  @keyframes firework{0%{transform:scale(0.8);opacity:0.5}50%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+  @keyframes sparkle{0%,100%{opacity:1;transform:scale(1)}25%{opacity:0.6;transform:scale(1.2)}50%{opacity:1;transform:scale(0.9)}75%{opacity:0.7;transform:scale(1.1)}}
+  .gift-title{animation:firework 1s ease-out forwards;}
+  .gift-title span{display:inline-block;animation:sparkle 2s ease-in-out infinite;}
+  .gift-title span:nth-child(1){animation-delay:0s}
+  .gift-title span:nth-child(2){animation-delay:0.05s}
+  .gift-title span:nth-child(3){animation-delay:0.1s}
+  .gift-title span:nth-child(4){animation-delay:0.15s}
+  .gift-title span:nth-child(5){animation-delay:0.2s}
+  .gift-title span:nth-child(6){animation-delay:0.25s}
+  .gift-title span:nth-child(7){animation-delay:0.3s}
+  .gift-title span:nth-child(8){animation-delay:0.35s}
+  .gift-title span:nth-child(9){animation-delay:0.4s}
+  .gift-title span:nth-child(10){animation-delay:0.45s}
+  .gift-title span:nth-child(11){animation-delay:0.5s}
+  .gift-title span:nth-child(12){animation-delay:0.55s}
+  .gift-title span:nth-child(13){animation-delay:0.6s}
+  .gift-title span:nth-child(14){animation-delay:0.65s}
+  .gift-title span:nth-child(15){animation-delay:0.7s}
+  .gift-title span:nth-child(16){animation-delay:0.75s}
+  .gift-title span:nth-child(17){animation-delay:0.8s}
+  .gift-title span:nth-child(18){animation-delay:0.85s}
+  .gift-title span:nth-child(19){animation-delay:0.9s}
+  .gift-title span:nth-child(20){animation-delay:0.95s}
+  .gift-title span:nth-child(21){animation-delay:1.0s}
+  .gift-title span:nth-child(22){animation-delay:1.05s}
+  .gift-title span:nth-child(23){animation-delay:1.1s}
+  .gift-title span:nth-child(24){animation-delay:1.15s}
+  .gift-title span:nth-child(25){animation-delay:1.2s}
+  .gift-title span:nth-child(26){animation-delay:1.25s}
   .dance-letter{display:inline-block;animation:letterDance 1.4s ease-in-out infinite;}
 
   .site-header{background:var(--gold);padding:14px 24px;display:flex;flex-direction:column;align-items:center;gap:3px;}
@@ -213,6 +243,7 @@
       <p class="result-teaser-label">Was dich erwartet</p>
       <p class="result-teaser-text">20 kurze Fragen in 5 Bereichen. Du brauchst etwa 5 Minuten. Am Ende siehst du als persönliches Bild, in welchem Bereich du gerade wenig Energie hast. Genau dort darf sanft hingeschaut werden.</p>
     </div>
+    <p style="text-align:center;font-family:'Cormorant Garamond','Georgia',serif;font-size:15px;color:var(--text-muted);font-style:italic;margin-bottom:20px">Du bekommst am Ende dieser Reise ein persönliches Geschenk.</p>
     <button class="btn-primary" onclick="startCheck()">Moment-Check starten</button>
     <p style="text-align:center;margin-top:20px;font-size:12px;color:var(--text-muted);line-height:1.6">🔒 Dieser Check speichert keine Daten. Alle Eingaben bleiben nur auf deinem Gerät.</p>
     <div class="page-footer">SEINsCode · Van Asten Coaching</div>
@@ -326,7 +357,7 @@
         <p>Melde dich einfach. Wir schauen gemeinsam hin, was du gerade wirklich brauchst.</p>
       </div>
       <a href="mailto:kontakt@vanastencoaching.com" style="text-decoration:none">
-        <button class="btn-primary" style="max-width:280px">Klarheitsgespräch anfragen</button>
+        <button class="btn-primary" style="max-width:320px;white-space:nowrap">Klarheitsgespräch anfragen</button>
       </a>
     </div>
 
@@ -378,7 +409,7 @@
     <div style="background:var(--gold-pale);border:1px solid var(--gold-light);border-radius:14px;padding:28px 26px;margin-bottom:24px;text-align:center">
       <p style="font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:300;color:var(--text-muted);line-height:1.8;font-style:italic;margin-bottom:20px">
         Ich lade dich ein, kurz deine Hand auf dein Herz zu legen.<br>
-        Du musst es nicht. Aber wenn es sich stimmig anfühlt — tu es einfach.
+        Du musst es nicht. Aber wenn es sich stimmig anfühlt. tu es einfach.
       </p>
       <p style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3vw,19px);color:var(--anthrazit-soft);line-height:1.85">
         Du hast dir heute Zeit für dich genommen. Nicht für andere. Für dich.<br>
@@ -389,8 +420,16 @@
       </p>
       <p style="font-size:13px;color:var(--text-muted);margin-top:16px;letter-spacing:1px;font-style:italic">Manfred van Asten</p>
     </div>
+
+    <div style="background:rgba(139,109,184,0.08);border:1px solid rgba(139,109,184,0.25);border-radius:14px;padding:24px 26px;margin-bottom:24px;text-align:center">
+      <p class="gift-title" style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(22px,4vw,30px);font-weight:400;color:#8B6DB8;margin-bottom:12px;text-transform:none;letter-spacing:1px"><span>✨</span> <span>D</span><span>e</span><span>i</span><span>n</span> <span>p</span><span>e</span><span>r</span><span>s</span><span>ö</span><span>n</span><span>l</span><span>i</span><span>c</span><span>h</span><span>e</span><span>s</span> <span>G</span><span>e</span><span>s</span><span>c</span><span>h</span><span>e</span><span>n</span><span>k</span> <span>✨</span></p>
+      <p style="font-family:'Cormorant Garamond','Georgia',serif;font-size:clamp(16px,3vw,19px);color:var(--anthrazit-soft);line-height:1.75;margin-bottom:20px">Du hast dir heute etwas Wichtiges geschenkt. Den Mut hinzuschauen. Das ist nicht selbstverständlich. Hier ist noch etwas. Nur für dich.</p>
+      <a href="https://alfima.com/vAC/seinscode-deine-7-minuten-koerperreise" target="_blank" style="text-decoration:none">
+        <button style="display:inline-block;padding:17px 32px;background:#8B6DB8;color:white;font-family:'Jost','Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:400;letter-spacing:2px;text-transform:uppercase;border:none;border-radius:50px;cursor:pointer;box-shadow:0 4px 18px rgba(139,109,184,0.3);transition:all 0.3s ease">🎁 Deine 7-Minuten-Körperreise</button>
+      </a>
+    </div>
     <div style="text-align:center;margin-bottom:36px;margin-top:32px">
-      <button class="btn-primary" style="max-width:260px;margin-bottom:10px" onclick="printResult()">Ergebnis drucken / speichern</button>
+      <button class="btn-primary" style="max-width:360px;margin-bottom:10px;white-space:nowrap" onclick="printResult()">Ergebnis drucken und speichern</button>
       <button class="btn-secondary" onclick="restartCheck()">Moment-Check neu starten</button>
       <p style="font-size:12px;color:var(--text-muted);margin-top:16px;font-style:italic;line-height:1.6">Tipp: Mach diesen Check in 4 Wochen noch einmal und schau, was sich bei dir verändert hat.</p>
     </div>
@@ -693,7 +732,7 @@ function showBereich(key) {
 function shareResult(){
   const area = document.getElementById('result-area-name').textContent;
   const date = document.getElementById('result-date').textContent;
-  const text = `Mein SEINsCode Moment-Check Ergebnis (${date}):\n\nMeine Einladung liegt im Bereich: ${area}\n\nErstellt mit dem SEINsCode Moment-Check von Van Asten Coaching – BewusstSEINswerkstatt`;
+  const text = `Mein SEINsCode Moment-Check Ergebnis (${date}):\n\nMeine Einladung liegt im Bereich: ${area}\n\nErstellt mit dem SEINsCode Moment-Check von Van Asten Coaching. BewusstSEINswerkstatt`;
   
   // Try Web Share API first (works on mobile)
   if (navigator.share) {
